@@ -1,0 +1,8 @@
+import pandas as pd
+
+# Download latest version
+file_path = 'piano_comp.csv'
+
+df = pd.read_csv(file_path)
+
+print(df.head(10))
