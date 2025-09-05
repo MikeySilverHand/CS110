@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 data = {'year': [2010, 2011, 2012, 2010, 2011, 2012, 2010, 2011, 2012], 
         'team': ['FCBarcelona', 'FCBarcelona', 'FCBarcelona', 'RMadrid', 'RMadrid', 'RMadrid', 'ValenciaCF', 'ValenciaCF', 'ValenciaCF'],
@@ -79,3 +80,39 @@ print(edu.head())
 
 group = edu[['GEO', 'Value']].groupby('GEO').mean()
 print(group.head())
+
+filtered_data = edu[edu['TIME'] > 2005]
+pivedu = pd.pivot_table(filtered_data, values='Value', index=['GEO'], columns=['TIME'])
+print(pivedu.head())
+
+#Now we can use the new index to select specific rows by label, using the loc operator
+print(pivedu.loc [['Spain' , 'Portugal'] , [2006 , 2011]])
+
+pivedu = pivedu.drop(['Euro area (13 countries)',
+                      'Euro area (15 countries)',
+                      'Euro area (17 countries)',
+                      'Euro area (18 countries)',
+                      'European Union (25 countries)',
+                      'European Union (27 countries)',
+                      'European Union (28 countries)'
+                      ], axis=0)
+pivedu = pivedu.rename(
+  index={'Germany (untill 1990 former territory of the FRG)': 'Germany'})
+pivedu = pivedu.dropna()
+print(pivedu.rank(ascending=False, method='first').head())
+
+#sum up all of the columns and rank the result
+totalSum = pivedu.sum(axis=1)
+print(totalSum.rank(ascending=False, method='dense').sort_values().head())
+
+fig = plt.figure(figsize=(12, 5))
+totalSum = pivedu.sum(axis=1).sort_values(ascending=False)
+totalSum.plot(kind='bar', style='b', alpha=0.4, title='Total Values for Country')
+plt.savefig('Totalvalue_Country.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+my_colors = ['b', 'r', 'g', 'y', 'm', 'c']
+ax = pivedu.plot(kind='barh', stacked=True, color=my_colors, figsize=(12, 6))
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+plt.savefig('Value_Time_Country.png', dpi=300, bbox_inches='tight')
+plt.show()
