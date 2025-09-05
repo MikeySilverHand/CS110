@@ -53,3 +53,29 @@ print(edu.tail())
 #his removes the indicated rows if axis=0, or the indicated columns if axis=1
 edu.drop('ValueNorm', axis=1, inplace=True)
 print(edu.head())
+
+#This function receives as an argument two data frames, and returns a new data frame
+#with the contents of both
+edu = pd.concat([edu,pd.DataFrame({'TIME': 2000, 'Value': 5.00, 'GEO': 'a'}, index=[max(edu.index)+1])])
+print(edu.tail())
+
+#Now we have to set the axis to 0, and specify the index of the row we want to remove
+edu.drop(max(edu.index), axis=0, inplace=True)
+print(edu.tail())
+
+#f we want to erase any row that contains an NaN value, we have to set the how keyword to an
+eduDrop = edu.dropna(how='any', subset=['Value'], axis=0)
+print(eduDrop.head())
+
+eduFilled = edu.fillna(value={'Value': 0})
+print(eduFilled.head())
+
+#Sort a dataframe using nay column descending
+edu.sort_values(by='Value', ascending=False, inplace=True)
+print(edu.head())
+
+edu.sort_index(axis=0, ascending=True, inplace=True)
+print(edu.head())
+
+group = edu[['GEO', 'Value']].groupby('GEO').mean()
+print(group.head())
