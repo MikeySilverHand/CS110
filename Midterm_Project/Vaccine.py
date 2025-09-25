@@ -24,8 +24,8 @@ mv = pd.read_csv('Midterm_Project/country_vaccinations_by_manufacturer.csv') # m
 wdd = pd.read_csv('Midterm_Project/worldometer_data.csv') # recovered, confirmed, deaths day wise 
 # fg = pd.read_csv('Midterm_Project/full_grouped.csv') # cases by country (recovered, confirmed, deaths) 
 
-regions = 'WHO Region' 
 
-wdd['Coutry/Region'] = 'Country/Region' 
+for region in wdd.groupby(['WHO Region', 'Continent']):
+    print(region)
 
-death_count = wdd.groupby('TotalDeaths')['TotalCases'] 
+death_count = wdd.groupby('Deaths/1M pop')['Tot Cases/1M pop'] 
