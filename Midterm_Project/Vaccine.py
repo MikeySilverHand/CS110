@@ -22,10 +22,19 @@ import random
 
 mv = pd.read_csv('Midterm_Project/country_vaccinations_by_manufacturer.csv') # manufacturer of vacanations and how much is given daily 
 wdd = pd.read_csv('Midterm_Project/worldometer_data.csv') # recovered, confirmed, deaths day wise 
-# fg = pd.read_csv('Midterm_Project/full_grouped.csv') # cases by country (recovered, confirmed, deaths) 
+gdp = pd.read_csv('Midterm_Project/') # Each countries GPD from 2005-2025
 
+Africa = wdd.loc[wdd['WHO Region']=='Africa']
+North_America = wdd.loc[wdd['Country/Region']=='North America']
+South_America = wdd.loc[wdd['Country/Region']=='South America']
+Eastern_Mediterranean = wdd.loc[wdd['WHO Region']=='EasternMediterranean']
+Europe = wdd.loc[wdd['WHO Region']=='Europe']
+South_East_Asia = wdd.loc[wdd['WHO Region']=='South-EastAsia']
+Western_Pacific = wdd.loc[wdd['WHO Region']=='WesternPacific']
 
-for region in wdd.groupby(['WHO Region', 'Continent']):
-    print(region)
+Regions = [Africa, North_America, South_America, Eastern_Mediterranean, Europe, South_East_Asia, Western_Pacific]
+
+for region in Regions:
+  print(region)
 
 death_count = wdd.groupby('Deaths/1M pop')['Tot Cases/1M pop'] 

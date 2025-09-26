@@ -1,4 +1,4 @@
-#!/Users/michaelhernandez/Documents/CS110/.venv/bin/python3.11
+#!/Users/michaelhernandez/Documents/CS110/.venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
