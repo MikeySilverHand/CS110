@@ -3,7 +3,7 @@
 # a lower death per case ratio. 
 #------------------------------------------------------------ 
 
-import matplotlib.pylab as plt 
+import matplotlib.pyplot as plt 
 import pandas as pd 
 import numpy as np 
 import seaborn as sns 
@@ -17,9 +17,9 @@ sns.set_theme()
 # gdp = gross domestic product
 # ------------------------------------------------------------ 
 
-mv = pd.read_csv('Midterm_Project/country_vaccinations_by_manufacturer.csv') # manufacturer of vacanations and how much is given daily 
-wom = pd.read_csv('Midterm_Project/worldometer_data.csv') # recovered, confirmed, deaths day wise 
-gdp = pd.read_csv('Midterm_Project/GDP.csv') # Each countries GPD from 2005-2025
+mv = pd.read_csv('country_vaccinations_by_manufacturer.csv') # manufacturer of vacanations and how much is given daily 
+wom = pd.read_csv('worldometer_data.csv') # recovered, confirmed, deaths day wise 
+gdp = pd.read_csv('GDP.csv') # Each countries GPD from 2005-2025
 
 #All of the countries that have information
 countries = wom['Country/Region'].unique()
@@ -36,9 +36,13 @@ valid_countries = counts[counts == 3].index
 #filter it so that only countries that are considered "valid" will be kept
 years = gdp_filtered[gdp_filtered['Country Name'].isin(valid_countries)]
 
-countries_ordered = years.groupby('Country Name')['Value'].sum()
+countries_names = years['Country Name'].unique()
+
+sums = years.groupby('Country Name')['Value'].sum()
 
 #store the GDP's of each country for each year
 gdp_2020 = np.sort(years[(years['Year'] == 2020)]['Value'])
 gdp_2021 = np.sort(years[(years['Year'] == 2021)]['Value'])
 gdp_2022 = np.sort(years[(years['Year'] == 2022)]['Value'])
+
+gdp_sums = years.groupby(years['Country Name'].unique())[years.groupby('Country Name')['Value'].sum()]
