@@ -1,6 +1,5 @@
 #------------------------------------------------------------ 
-# Hypotheis: Countries that maneufactur more vaccinations have  
-# a lower death per case ratio. 
+# Hypotheis: The more vaccinations a country Manufactured coorelates to less time of cases dropping lower than 10 cases per 1 million population
 #------------------------------------------------------------ 
 
 import matplotlib.pyplot as plt 
@@ -15,65 +14,113 @@ sns.set_theme()
 # ------------------------------------------------------------ 
 # mv = manufacturer of vacanations 
 # wom = worldometer 
+# fg = full grouped
 # gdp = gross domestic product
 # ------------------------------------------------------------ 
 
 mv = pd.read_csv('country_vaccinations_by_manufacturer.csv') # manufacturer of vacanations and how much is given daily 
-wom = pd.read_csv('worldometer_data.csv') # recovered, confirmed, deaths day wise 
-gdp = pd.read_csv('GDP.csv') # Each countries GPD from 2005-2025
+wom = pd.read_csv('worldometer_data.csv') #population
+cases = pd.read_csv('Cases.csv') #Cases
 
 #All of the countries that have information
 max_countries_one = wom['Country/Region'].unique()
 max_countries_two = mv['location'].unique()
+max_countries_three = cases['Country'].unique()
 
-#Group By GDP
 
-#Limit the data to only use 2020-2022 and make sure all the countries match up
-gdp_unfiltered_countries = gdp.loc[gdp['Year'].isin([2020, 2021, 2022]) & (gdp['Country Name'].isin(max_countries_one)) & (gdp['Country Name'].isin(max_countries_two))]
-
-#see how many times each country is referred to each year
-counts = gdp_unfiltered_countries.groupby('Country Name')['Year'].nunique()
-
-#find the valid countries that are referred to 3 times for each year
-valid_countries = counts[counts == 3].index
-
-#filter it so that only countries that are considered "valid" will be kept
-gdp_filtered_countries = gdp_unfiltered_countries[gdp_unfiltered_countries['Country Name'].isin(valid_countries)]
-
-#Store everything in a data set with one of each country and their GDP
-countries = gdp_filtered_countries.groupby('Country Name')['Value'].sum().reset_index()
+check = cases[cases['Country'].isin(max_countries_one) & cases['Country'].isin(max_countries_two)]
+temp = check.groupby('Country')['Active_cases'].sum()
+max_countries_four = check[(check['Active_cases'] != '') & (check['Active_cases'].notna())]
 
 #Group By Total Vaccinations
 
-#Filter vaccinations
-vaccinations_filtered_countries = mv[mv['location'].isin(valid_countries)]
+#Filter countries
+vaccination_unfiltered = mv[mv['location'].isin(max_countries_one) & mv['location'].isin(max_countries_three)]
 
-#Store everything in a data set\
-sum_vaccinations = vaccinations_filtered_countries.groupby('location')['total_vaccinations'].sum().reset_index().sort_values(by='location').reset_index(drop=True)
-countries['Vaccinations'] = sum_vaccinations['total_vaccinations']
-
-#Group By Total cases and deaths by 1 million pop
-
-#Filter total cases
-total_cases_n_deaths_filtered_countries = wom[wom['Country/Region'].isin(valid_countries)]
+valid_country = vaccination_unfiltered['location'].unique()
 
 #Store everything in a data set
-total_cases = total_cases_n_deaths_filtered_countries.groupby('Country/Region')['Tot Cases/1M pop'].sum().reset_index().sort_values(by='Country/Region').reset_index(drop=True)
-countries['Cases'] = total_cases['Tot Cases/1M pop']
-total_deaths = total_cases_n_deaths_filtered_countries.groupby('Country/Region')['Deaths/1M pop'].sum().reset_index().sort_values(by='Country/Region').reset_index(drop=True)
-countries['Deaths'] = total_deaths['Deaths/1M pop']
+countries = vaccination_unfiltered.groupby('location')['total_vaccinations'].sum().reset_index().sort_values(by='location').reset_index(drop=True)
 
-#order the countries by GDP
-countries = countries.reset_index().sort_values(by='Value').reset_index(drop=True)
 
-#group it into 16 different groups
-n = len(countries)
-c = math.ceil((n-1)/10)
+#Group By Total population
 
-groups = [[0 for i in range(math.ceil((n-1)/10))] for j in range(9)]
+#Filter population
+population_unfiltered = wom[wom['Country/Region'].isin(valid_country)]
 
-num = 0
-for i in range(c):
-    for j in range(3):
-        groups[j][i] = countries[num]
-        num+=1
+#Store everything in a data set
+population_filtered = population_unfiltered.groupby('Country/Region')['Population'].sum().reset_index().sort_values(by='Country/Region').reset_index(drop=True)
+countries['Population'] = population_filtered['Population']
+
+
+#Group by 2021-2022
+
+#filter cases
+max_countries_four = max_countries_four.copy()
+max_countries_four['Date'] = pd.to_datetime(max_countries_four['Date'])
+cases_filtered = max_countries_four[(max_countries_four['Date'] >= '2021-01-01') ]#& (cases['Country'].isin(max_countries_four))
+
+# population 
+
+merged = cases_filtered.merge(countries, left_on='Country', right_on='location', how='left')
+merged['Cases/1M'] = (merged['Active_cases'] / merged['Population']) * 1000000
+print(merged)
+
+
+
+
+
+
+#order the countries by Population
+countries = countries.reset_index().sort_values(by='Population').reset_index(drop=True)
+
+
+countries_to_plot = ['US', 'India', 'Brazil', 'Russia', 'UK', 'France', 'Turkey', 'Italy', 'Spain', 'Germany']
+
+plt.figure(figsize=(10,8))
+for country in countries_to_plot:
+    country_data = merged[merged['Country'] == country]
+    plt.plot(country_data['Date'], country_data['Cases/1M'], label=country)
+
+# plt.plot(merged['Date'], merged['Cases/1M'])
+plt.xlabel('Date')
+plt.ylabel('Cases per 1M people')
+plt.title('Cases per 1M people in 2021-2022')
+plt.legend()
+plt.savefig('Cases_per_1M_2021_2022.png')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+# subset = countries.iloc[0:len(countries), 1]
+
+# #group it into 10 different groups
+# n = len(countries)
+# r = math.ceil((n-1)/10)
+# c = math.ceil((n-1)/4)
+
+# groups = [[0 for i in range(c)] for j in range(r)]
+
+# num = 0
+# for i in range(c):
+#     for j in range(r):
+#         if(num == n):
+#             break
+#         else:
+#             groups[j][i] = subset.iloc[num]
+#         num+=1
+
+# for i in range(c):
+#     print(f"\n---Group {i+1}---")
+#     for j in range(r):
+#         if(groups[j][i] != 0):
+#          print(groups[j][i])
