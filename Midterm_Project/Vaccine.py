@@ -81,16 +81,14 @@ merged['Cases/1M'] = (merged['new_cases'] / merged['Population']) * 1000000
 # ------------------------------------------------------------
 # Outputs
 
-countries_to_plot = np.random.choice(merged['location'].unique(), 10, replace=False)
+valid_countries = merged[(merged['total_vaccinations'] >= 10000000000) & (merged['total_vaccinations'] <= 100000000000000)]
+countries_to_plot = np.random.choice(merged['location'].unique(),  10, replace=False)
 
 
 #  Graph 1
 plt.figure(figsize=(10,8))
 for country in countries_to_plot:
     country_data = merged[merged['location'] == country]
-    country_to_output = country_data.groupby('location')['total_vaccinations'].sum()
-    for i in country_to_output:
-        print(f"{country_data['location'].unique()}: {i}")
     plt.plot(country_data['Date'], country_data['Cases/1M'], label=country)
 plt.axhline(y=2000, color='red', linestyle='--', label='2000 Cases/1M Threshold')
 plt.xlabel('Date')
@@ -102,11 +100,17 @@ plt.savefig('Cases_per_1M_2021_2022.png')
 plt.show()
 
 # Graph 2
+def add_labels(x, y):
+    for i in range(len(x)):
+        plt.text(i, y[i], f"{(y[i]/1000000000000):.2f}x10^12", fontsize=8, ha="center")
+
 plt.figure(figsize=(10,8))
 temp = merged[merged['location'].isin(countries_to_plot)]
 total_vaccinations_by_country = temp.groupby('location')['total_vaccinations'].sum().reset_index().sort_values(by='total_vaccinations', ascending=False).reset_index(drop=True)
 
-plt.bar(total_vaccinations_by_country['location'], total_vaccinations_by_country['total_vaccinations'])
+plt.bar(total_vaccinations_by_country['location'], total_vaccinations_by_country['total_vaccinations'], color='#2a21ad')
+
+add_labels(total_vaccinations_by_country['location'], total_vaccinations_by_country['total_vaccinations'])
 
 plt.xlabel('location')
 plt.ylabel('Total Vaccinations')
