@@ -81,7 +81,7 @@ merged['Cases/1M'] = (merged['new_cases'] / merged['Population']) * 1000000
 # ------------------------------------------------------------
 # Outputs
 
-valid_countries = merged[(merged['total_vaccinations'] >= 10000000000) & (merged['total_vaccinations'] <= 100000000000000)]
+valid_countries = merged[(merged['total_vaccinations'] >= 1000000000000) & (merged['total_vaccinations'] <= 100000000000000)]
 countries_to_plot = np.random.choice(merged['location'].unique(),  10, replace=False)
 
 
