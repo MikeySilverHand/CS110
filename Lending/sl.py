@@ -1,15 +1,13 @@
 import matplotlib.pylab as plt
 import pickle
 import numpy as np
-
-# Load the Data set
+# Load the dataset
 ofname = open('dataset_small.pkl', 'rb')
-(x,y) = pickle.load(ofname, encoding="latin1")
-
+(x,y) = pickle.load(ofname , encoding = "latin1" )
 # Check the shapes
-dims = x.shape[1]
-N = x.shape[0]
-print('dims: ', str(dims)+', sample: '+ str(N))
+dims = x.shape [1]
+N = x.shape [0]
+print ('dims: '+ str(dims) + ', samples: '+ str(N))
 
 from sklearn import neighbors
 from sklearn import metrics
@@ -39,16 +37,15 @@ yhat=knn.predict(x)
 print("classification accuracy:", metrics.accuracy_score(yhat, y))
 print("confusion matrix: \n" + str(metrics.confusion_matrix(yhat,y)))
 
-perm = np.random.permutation(y.size)
+perm = np . random . permutation ( y . size )
 PRC = 0.7
-split_point = int(np.ceil(y.shape[0]*PRC))
-X_train = x[perm[:split_point],:]
-y_train = y[perm[:split_point]]
-X_test = x[perm[split_point:],:]
-y_test = y[perm[split_point:]]
-
-print('Training shape: ', + str(X_train.shape), ' , training targets shape: ' + str(y_train.shape))
-print('Testing shape: ', + str(X_test.shape), ' , testing targets shape: '+ str(y_test.shape))
+split_point = int ( np . ceil ( y . shape [0]* PRC ) )
+X_train = x [ perm [: split_point ] ,:]
+y_train = y [ perm [: split_point ]]
+X_test = x [ perm [ split_point :] ,:]
+y_test = y [ perm [ split_point :]]
+print ('Training shape: ' + str ( X_train . shape ) , ' , training targets shape: '+ str ( y_train . shape ) )
+print ('Testing shape: ' + str ( X_test . shape ) , ' , testing targets shape: '+ str ( y_test . shape ) )
 
 knn.fit(X_train, y_train)
 yhat_train = knn.predict(X_train)
@@ -61,20 +58,22 @@ print("TESTING STATS:")
 print("Accuracy:", metrics.accuracy_score(yhat_test, y_test))
 print("Confusion Matrix:\n", metrics.confusion_matrix(yhat_test, y_test))
 
-from sklearn.model_selection import train_test_split
+from sklearn . model_selection import train_test_split
 PRC = 0.3
 acc = np.zeros((10,))
 for i in range(10):
-  X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=PRC)
-  knn= neighbors.KNeighborsClassifier(n_neighbors=1)
-  knn.fit(X_train, y_train)
-  yhat = knn.predict(X_test)
-  acc[i] = metrics.accuracy_score(yhat, y_test)
-  acc.shape=(1, 10)
-print("Mean expected error: "+str(np.mean(acc[0])))
+  X_train, X_test, y_train, y_test = train_test_split (x, y, test_size = PRC)
+  knn = neighbors.KNeighborsClassifier(n_neighbors =1)
+  knn.fit ( X_train , y_train )
+  yhat = knn.predict ( X_test )
+  acc[i] = metrics.accuracy_score( yhat, y_test)
+
+acc.shape =(1,10)
+print("Mean expected error: " + str ( np . mean (acc[0]) ) )
 
 from sklearn import tree
 from sklearn import svm
+from sklearn.model_selection import KFold
 PRC = 0.1
 acc_r = np . zeros ((10 ,4) )
 for i in range (10) :
@@ -107,7 +106,7 @@ for i in range (4) :
 ax = plt.gca()
 ax.set_xticklabels(['1 - NN', '3 - NN', 'SVM', 'Decission Tree'])
 plt.ylabel ('Accuracy')
-plt.savefig ("error_ms_1 . png", dpi =300 , bbox_inches = 'tight')
+plt.savefig ("error_ms_1.png", dpi =300 , bbox_inches = 'tight')
 
 MAXN =700
 
@@ -115,13 +114,13 @@ fig = plt.figure()
 fig.set_size_inches(6 ,5)
 
 plt.plot(1.25* np.random.randn ( MAXN ,1) ,1.25* np.random.randn(
-MAXN ,1) , 'r .', alpha = 0.3)
+MAXN ,1) , 'r.', alpha = 0.3)
 plt . plot(8+1.5* np.random.randn( MAXN ,2) ,5+1.5* np.random.randn
-( MAXN ,2) , 'r .', alpha = 0.3)
+  ( MAXN ,2) , 'r.', alpha = 0.3)
 plt.plot (5+1.5* np.random.randn( MAXN ,1) ,5+1.5* np.random.randn
-( MAXN ,1) , 'b .', alpha = 0.3)
+  ( MAXN ,1) , 'b.', alpha = 0.3)
 plt.show()
-plt.savefig("toy_problem . png", dpi =300 , bbox_inches = 'tight')
+plt.savefig("toy_problem.png", dpi =300 , bbox_inches = 'tight')
 
 C = 5 # depth of tree
 MAXN = 1000
@@ -253,36 +252,36 @@ p4 , = plt . plot ( np . mean ( yhat_train [: , : , 1]. T , axis =1) , 'b')
 fig = plt . gcf ()
 fig . set_size_inches (12 , 5)
 
-plt . xlabel ('Number of samples x10')
-plt . ylabel ('Error rate')
-plt . legend ([ p3 , p4 ] , [ " Test C = 1 " , " Train C = 1 " ])
-plt . savefig ( " learning_curve_2 . png " , dpi =300 , bbox_inches = 'tight')
+plt.xlabel ('Number of samples x10')
+plt.ylabel ('Error rate')
+plt.legend ([ p3 , p4 ] , [ "Test C = 1" , "Train C = 1" ])
+plt.savefig ("learning_curve_2.png" , dpi =300 , bbox_inches = 'tight')
 
-p1 , = plt . plot ( np . mean ( yhat_test [: , : , 0]. T , axis =1) , color =
+p1, = plt . plot ( np . mean ( yhat_test [: , : , 0]. T , axis =1) , color =
   'pink')
-p2 , = plt . plot ( np . mean ( yhat_train [: , : , 0]. T , axis =1) , 'c')
-p3 , = plt . plot ( np . mean ( yhat_test [: , : , 1]. T , axis =1) , 'r')
-p4 , = plt . plot ( np . mean ( yhat_train [: , : , 1]. T , axis =1) , 'b')
+p2, = plt . plot ( np . mean ( yhat_train [: , : , 0]. T , axis =1) , 'c')
+p3, = plt . plot ( np . mean ( yhat_test [: , : , 1]. T , axis =1) , 'r')
+p4, = plt . plot ( np . mean ( yhat_train [: , : , 1]. T , axis =1) , 'b')
 
 fig = plt . gcf ()
-fig . set_size_inches (12 , 5)
+fig.set_size_inches (12 , 5)
 
-plt . xlabel ('Number of samples x10')
-plt . ylabel ('Error rate')
-plt . legend (
-[ p1 , p2 , p3 , p4 ] ,
-["Test C = 5 " , " Train C = 5 " , " Test C = 1 " , "Train C = 1"]
+plt.xlabel ('Number of samples x10')
+plt.ylabel ('Error rate')
+plt.legend (
+  [ p1 , p2 , p3 , p4 ] ,
+  ["Test C = 5" , "Train C = 5" , "Test C = 1" , "Train C = 1"]
 )
-plt . savefig ( " learning_curve_3 . png " , dpi =300 , bbox_inches = 'tight')
+plt.savefig("learning_curve_3.png" , dpi =300 , bbox_inches = 'tight')
 
 ofname = open ('dataset_small.pkl' , 'rb')
-(X , y ) = pickle . load ( ofname , encoding = "latin1")
+(X , y ) = pickle.load ( ofname , encoding = "latin1")
 
 # Create a 10 - fold cross validation set
 kf = KFold( n_splits =10 , shuffle = True , random_state =0)
 
 # Search the parameter among the following
-C = np . arange (2 , 20)
+C = np.arange (2 , 20)
 
 acc = np . zeros ((10 , 18) )
 
@@ -293,7 +292,7 @@ for train_index , val_index in kf . split ( y ) :
   j = 0
   for c in C :
     dt = tree . DecisionTreeClassifier(
-    min_samples_leaf =1 , max_depth = c
+      min_samples_leaf =1 , max_depth = c
     )
     dt . fit ( X_train , y_train )
     yhat = dt . predict ( X_val )
@@ -301,27 +300,27 @@ for train_index , val_index in kf . split ( y ) :
     j = j + 1
 i = i + 1
 
-plt . boxplot ( acc )
+plt.boxplot ( acc )
 
 for i in range (18) :
-  xderiv = ( i + 1) * np . ones ( acc [: , i ]. shape ) \
-    + ( np . random . rand (10 ,) - 0.5) * 0.1
-  plt . plot ( xderiv , acc [: , i ] , 'ro', alpha =0.3)
+  xderiv = ( i + 1) * np.ones ( acc [: , i ]. shape ) \
+    + ( np.random.rand(10,) - 0.5) * 0.1
+  plt.plot ( xderiv , acc [:,i] , 'ro', alpha =0.3)
 
-print ('Mean accuracy: ' + str ( np . mean ( acc , axis =0) ) )
-print ('Selected model index: ' + str ( np . argmax ( np . mean ( acc ,
+print('Mean accuracy: ' + str ( np . mean ( acc , axis =0) ) )
+print('Selected model index: ' + str ( np . argmax ( np . mean ( acc ,
 axis =0) ) ) )
 print ('Complexity: ' + str ( C [ np . argmax ( np . mean ( acc , axis =0) )
 ]) )
 
-plt . ylim ((0.7 , 1.0) )
-fig = plt . gcf ()
-fig . set_size_inches (12 , 5)
-plt . xlabel ('Complexity')
-plt . ylabel ('Accuracy')
-plt . savefig ("model_selection.png" , dpi =300 , bbox_inches ='tight')
+plt.ylim ((0.7 , 1.0) )
+fig = plt.gcf ()
+fig.set_size_inches (12 , 5)
+plt.xlabel ('Complexity')
+plt.ylabel ('Accuracy')
+plt.savefig ("model_selection.png" , dpi =300 , bbox_inches ='tight')
 
-ofname = open('./files/ch05/dataset)small.pkl', 'rb')
+ofname = open('dataset_small.pkl', 'rb')
 (X, y) = pickle.load(ofname, encoding='latin1')
 
 # Train-test split
@@ -360,26 +359,26 @@ print ('Complexity: ' + str ( C [ np . argmax ( np . mean ( acc , axis =0) )
 best_depth = C [ np . argmax ( np.mean( acc , axis =0) ) ]
 dt = tree.DecisionTreeClassifier( min_samples_leaf =1 ,
 max_depth = best_depth )
-dt . fit ( X_train , y_train )
+dt.fit ( X_train , y_train )
 # Evaluate on test set
-yhat = dt . predict ( X_test )
-print ('Test accuracy: ' + str ( metrics . accuracy_score ( yhat ,
-y_test ) ) )
+yhat = dt.predict ( X_test )
+print('Test accuracy: ' + str ( metrics . accuracy_score ( yhat ,
+  y_test ) ) )
 
 # Train final model for deployment ( on full data )
-dt = tree . DecisionTreeClassifier( min_samples_leaf =1 ,
+dt = tree.DecisionTreeClassifier( min_samples_leaf =1 ,
   max_depth = best_depth )
-dt . fit (X , y )
+dt.fit (X , y )
 
 # Plot CV accuracy boxplot
-plt . boxplot ( acc )
+plt.boxplot ( acc )
 for i in range (18) :
   xderiv = ( i + 1) * np . ones ( acc [: , i ]. shape ) + \
     ( np . random . rand (10 ,) - 0.5) * 0.1
   plt.plot(xderiv , acc [: , i ] , 'ro' , alpha =0.3)
-plt . ylim ((0.7 , 1.0) )
+plt.ylim ((0.7 , 1.0) )
 fig = plt . gcf ()
-fig . set_size_inches (12 , 5)
+fig.set_size_inches (12 , 5)
 
 from sklearn.preprocessing import StandardScaler
 from sklearn import svm
@@ -387,8 +386,8 @@ from sklearn import linear_model
 from sklearn.model_selection import KFold, GridSearchCV
 from sklearn import metrics
 
-ofname = open('dataset_small . pkl', 'rb')
-(X , y ) = pickle . load ( ofname , encoding = 'latin1')
+ofname = open('dataset_small.pkl', 'rb')
+(X,y) = pickle.load ( ofname , encoding = 'latin1')
 
 parameters = {
   'C': [1e4 , 1e5 , 1e6 ],
@@ -399,7 +398,7 @@ N_folds = 3
 kf = KFold ( n_splits = N_folds , shuffle = True , random_state =0)
 
 acc = np.zeros (( N_folds ,) )
-yhat = y.copy ()
+yhat = y.copy()
 
 i = 0
 for train_index , test_index in kf . split ( X ) :
@@ -415,8 +414,8 @@ for train_index , test_index in kf . split ( X ) :
   X_test = scaler . transform ( X_test )
   yhat [ test_index ] = clf . predict ( X_test )
 # Final evaluation on the whole dataset
-print ( metrics . accuracy_score ( yhat , y ) )
-print ( metrics . confusion_matrix ( yhat , y ) )
+print( metrics.accuracy_score ( yhat , y ) )
+print( metrics.confusion_matrix ( yhat , y ) )
 
 dvals = [
   {1: 0.25} , {1: 0.5} , {1: 1} ,
@@ -436,10 +435,10 @@ N_folds = 3
 kf = KFold ( n_splits = N_folds , shuffle = True , random_state
   =0)
 
-acc = np . zeros (( N_folds ,) )
-mat = np . zeros ((2 , 2 , N_folds ) )
+acc = np.zeros (( N_folds ,) )
+mat = np.zeros ((2 , 2 , N_folds ) )
 i = 0
-yhat = y . copy ()
+yhat = y.copy ()
 
 for train_index , test_index in kf . split ( X ) :
   X_train , X_test = X [ train_index , :] , X [ test_index ,
@@ -447,16 +446,16 @@ for train_index , test_index in kf . split ( X ) :
   y_train , y_test = y [ train_index ] , y [ test_index ]
 
   scaler = StandardScaler ()
-  X_train = scaler . fit_transform ( X_train )
+  X_train = scaler.fit_transform ( X_train )
 
-  clf = svm . SVC ( kernel = 'rbf')
+  clf = svm.SVC ( kernel = 'rbf')
   clf = GridSearchCV ( clf , parameters , cv =2)
   clf . fit ( X_train , y_train . ravel () )
-  X_test = scaler . transform ( X_test )
-  yhat [ test_index ] = clf . predict ( X_test )
-  acc [ i ] = metrics . accuracy_score ( yhat [ test_index ] ,
+  X_test = scaler.transform ( X_test )
+  yhat [ test_index ] = clf.predict ( X_test )
+  acc [ i ] = metrics.accuracy_score ( yhat [ test_index ] ,
 y_test )
-  mat [: , : , i ] = metrics . confusion_matrix (
+  mat [: , : , i ] = metrics.confusion_matrix (
     yhat [ test_index ] , y_test )
   
   print ( str ( clf . best_params_ ) )
@@ -466,7 +465,7 @@ print ('Mean accuracy: ' + str ( np . mean ( acc ) ) )
 opoint.append (( np . mean ( acc ) , np . sum ( mat , axis =2) ) )
 
 from sklearn import ensemble
-ofname = open ('dataset_small . pkl', 'rb')
+ofname = open ('dataset_small.pkl', 'rb')
 (X , y ) = pickle.load(ofname , encoding = 'latin1')
 dvals = [
   {1: 0.25} , {1: 0.5} , {1: 1} ,
@@ -527,7 +526,7 @@ fig.set_size_inches ((12 , 8) )
 ax.set_xlabel('campaign cost', size =16)
 ax.set_ylabel('retention rate', size =16)
 ax.set_zlabel('profit', size =16)
-fig.savefig ('rf_cost . png', dpi =100 , format = 'PNG')
+fig.savefig ('rf_cost.png', dpi =100 , format = 'PNG')
 
 print ('Max profit: ' +
   str (100 * ( np . max ( Z ) - np . min ( Z ) ) / np . min ( Z ) ) )
