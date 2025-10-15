@@ -131,12 +131,12 @@ print ( " R ^2: " , metrics . r2_score ( y_hat , y ) )
 grouped = ice2.groupby('mo')
 month_means = grouped.extent.mean()
 month_variances = grouped.extent.var ()
-print ('Means: ', month_means )
-print ('Variances: ', month_variances )
+print('Means: ', month_means )
+print('Variances: ', month_variances )
 
 X = np.array([2025]).reshape( -1 ,1)
 y_hat = model.predict( X )
 j = 1 # January
 # Original value ( before normalization )
 y_hat = ( y_hat * month_means . mean () /100) + month_means [ j ]
-print ("Prediction of extent for January 2025 (in millions ofsquare km): " , y_hat )
+print ("Prediction of extent for January 2025 (in millions of square km): " , y_hat )
